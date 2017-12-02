@@ -5,6 +5,8 @@
 #include <sstream>
 #include <string>
 #include <algorithm>
+#include <functional>
+#include <set>
 #include <vector>
 #include <cmath>
 
@@ -15,11 +17,6 @@ void fillSimilitudeBetweenUsers(int, vector<User>* users, bool);
 void writeResult(int number, vector<User>* users);
 void calcNewRates(vector<User>* users);
 void computeMeanSquaredError(int, vector<User>*);
-
-bool compareFunc(pair<int, int> elem1 ,pair<int, int> elem2)
-{
-	return elem1.second < elem2.second;
-}
 
 int main(int argc, char *argv[])
 {
@@ -145,10 +142,9 @@ void readFiles(int number, vector<User>* users)
 			}
 		}
 		*/
-
 		for(User u : *users)
 		{
-			sort(u.getSimilitude().begin(), u.getSimilitude().end(), compareFunc);
+			u.sortSimilitude();
 		}
 	}
 
@@ -251,13 +247,30 @@ void calcNewRates(vector<User>* users)
 	cout << "Calcul des notes hypothetiques..." << endl;
 	int nbNoteNull = 0;
 	//Pour chaque user:
+	vector<int> closestNeigh;
 	for (User current : *users) {
 		map<int, int> trueRatings = current.getTestRatings();
 		for (auto idFilm : trueRatings) {
 			double noteSum = 0;
 			double nbNotes = 0;
 			double finalNote;
-			vector<int> closestNeigh = current.getKClosestUsers();
+			closestNeigh.clear();
+			int nbClosest = 0;
+			map<int, double> similitude = current.getSimilitude();
+			for (auto &element : similitude)
+			{
+				User tmp = users->at(element.first - 1);
+				if(tmp.hasRated(idFilm.first))
+				{
+					closestNeigh.push_back(tmp.getId());
+					nbClosest++;
+					if(nbClosest >= K_CLOSEST_USR)
+					{
+						break;
+					}
+				}
+			}
+
 			for (int neigh : closestNeigh)
 			{
 				User closeUser = users->at(neigh-1);
@@ -275,6 +288,10 @@ void calcNewRates(vector<User>* users)
 			} else {
 				nbNoteNull += 1;
 			}
+		}
+		if(current.getId() % 10 == 0)
+		{
+			cout << "Utilisateur 50"<<endl;
 		}
 	}
 	cout << "Calcul termine... Notes nulles: "<< nbNoteNull << endl;

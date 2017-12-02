@@ -31,6 +31,7 @@ public:
 	void setMoyenneRatings(double moy){this->moyenneRatings = moy;}
 	double getMoyenneRatings(){return this->moyenneRatings;};
 	std::vector<int> getKClosestUsers(){return this->kClosestUsers;};
+	void sortSimilitude();
 
 	std::map<int, int> getRatings() { return ratedMovies; };
 	std::map<int, int> getTestRatings() { return testMovies; };

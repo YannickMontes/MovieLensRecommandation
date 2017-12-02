@@ -1,6 +1,8 @@
 #include "User.h"
 #include <stdexcept>
-
+#include <algorithm>
+#include <functional>
+#include <set>
 
 using namespace std;
 
@@ -59,4 +61,22 @@ int User::getRatingFor(int idFilm)
 void User::addClosestUser(int idUser)
 {
 	this->kClosestUsers.push_back(idUser);
+}
+
+void User::sortSimilitude()
+{
+	typedef function<bool(pair<int, double>, pair<int, double>)> Comparator;
+	Comparator compFunctor = [](pair<int, double> elem1 ,pair<int, double> elem2)
+	{
+		return elem1.second > elem2.second;
+	};
+
+	set<pair<int, double>, Comparator> setOfKey(this->similitude.begin(), this->similitude.end(), compFunctor);
+
+	this->similitude.clear();
+
+	for (pair<int, double> element : setOfKey)
+	{
+		this->similitude.emplace(element.first, element.second);
+	}
 }
