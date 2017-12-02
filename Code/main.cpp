@@ -14,6 +14,7 @@ void readFiles(int, vector<User>*);
 void fillSimilitudeBetweenUsers(int, vector<User>* users, bool);
 void writeResult(int number, vector<User>* users);
 void calcNewRates(vector<User>* users);
+void computeMeanSquaredError(int, vector<User>*);
 
 int main(int argc, char *argv[])
 {
@@ -21,7 +22,7 @@ int main(int argc, char *argv[])
 	cout << "Arnaud Ricaud 17 132 853" << endl;
 	cout << "Yannick Montes 17 138 937" << endl;
 
-	int docToLoad = 5;
+	int docToLoad = 1;
 
 	vector<User> users;
 	readFiles(docToLoad, &users);
@@ -226,6 +227,7 @@ void writeResult(int number, vector<User>* users) {
 		}
 		i++;
 	}
+
 	output.close();
 	cout << "Ecriture terminee" << endl;
 }
@@ -268,3 +270,21 @@ void calcNewRates(vector<User>* users)
 	cout << "Calcul termine... Notes nulles: "<< nbNoteNull << endl;
 }
 
+
+void computeMeanSquaredError(int number, vector<User>* users)
+{
+	double meanSquaredError = 0;
+	for(User u : *users)
+	{
+		map<int, int> trueRatings = u.getTestRatings();
+		map<int, int> guessRatings = u.getHypotheticalRates();
+		for(auto &rating : guessRatings)
+		{
+			meanSquaredError += pow((guessRatings[rating.first] - trueRatings[rating.first]), 2);
+		}
+	}
+
+	meanSquaredError = sqrt((1 / (0.2*NB_RATINGS)) * meanSquaredError);
+
+	cout << "L'erreur moyenne est de " << meanSquaredError << endl;
+}

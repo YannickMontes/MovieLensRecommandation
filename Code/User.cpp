@@ -60,7 +60,3 @@ void User::addClosestUser(int idUser)
 {
 	this->kClosestUsers.push_back(idUser);
 }
-
-
-
-
