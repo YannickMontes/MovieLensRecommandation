@@ -12,6 +12,7 @@ using namespace std;
 
 void readFiles(int, vector<User>*);
 void fillSimilitudeBetweenUsers(int, vector<User>* users, bool);
+void writeResult(int number, vector<User>* users);
 
 int main(int argc, char *argv[])
 {
@@ -25,7 +26,7 @@ int main(int argc, char *argv[])
 	readFiles(docToLoad, &users);
 
 	fillSimilitudeBetweenUsers(docToLoad, &users, true);
-
+	writeResult(docToLoad, &users);
 	return 0;
 }
 
