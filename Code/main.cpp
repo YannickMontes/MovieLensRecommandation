@@ -28,6 +28,7 @@ int main(int argc, char *argv[])
 	readFiles(docToLoad, &users);
 	calcNewRates(&users);
 	writeResult(docToLoad, &users);
+	computeMeanSquaredError(docToLoad, &users);
 	system("pause");
 	return 0;
 }
@@ -239,29 +240,27 @@ void calcNewRates(vector<User>* users)
 	cout << "Calcul des notes hypothetiques..." << endl;
 	int nbNoteNull = 0;
 	//Pour chaque user:
-	for (int i = 0; i < users->size(); i++) {
-		for (auto idFilm : (*users)[i].getTestRatings()) {
+	for (User current : *users) {
+		map<int, int> trueRatings = current.getTestRatings();
+		for (auto idFilm : trueRatings) {
 			double noteSum = 0;
 			double nbNotes = 0;
 			double finalNote;
-			for (int j = 0; j < (*users)[i].getKClosestUsers().size(); j++) {
-				User *closeUser = nullptr;
-				for (int l = 0; l < users->size(); l++) {
-					if ((*users)[l].getId() == (*users)[i].getKClosestUsers()[j]) {
-						closeUser = &(users->at(l));
-						break;
-					}
-				}
-				if (closeUser->getRatings().find(idFilm.first) != closeUser->getRatings().end()) {
-					noteSum = noteSum + closeUser->getRatings()[idFilm.first];
-					nbNotes += 1;
+			vector<int> closestNeigh = current.getKClosestUsers();
+			for (int neigh : closestNeigh)
+			{
+				User closeUser = users->at(neigh-1);
+				if(closeUser.hasRated(idFilm.first))
+				{
+					noteSum = noteSum + closeUser.getRatingFor(idFilm.first);
+					nbNotes++;
 				}
 			}
-			if (nbNotes != 0) {
+			if (nbNotes != 0)
+			{
 				finalNote = noteSum / nbNotes;
-				cout <<"note: "<< finalNote << endl;
-				system("pause");
-				(*users)[i].addHypotheticalRate(idFilm.first, finalNote);
+				//cout <<"note: "<< finalNote << endl;
+				current.addHypotheticalRate(idFilm.first, finalNote);
 			} else {
 				nbNoteNull += 1;
 			}
