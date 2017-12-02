@@ -20,7 +20,7 @@ int main(int argc, char *argv[])
 	cout << "Arnaud Ricaud 17 je sais pas" << endl;
 	cout << "Yannick Montes 17 138 937" << endl;
 
-	int docToLoad = 1;
+	int docToLoad = 5;
 
 	vector<User> users;
 	readFiles(docToLoad, &users);
@@ -186,6 +186,12 @@ void writeResult(int number, vector<User>* users) {
 
 	ofstream output;
 	output.open(OUT_RESULT_DEB + number + (string)OUT_SIMILITUDE_END);
+
+	if(!output)
+	{
+		cout << "Fail to write results" << endl;
+		return;
+	}
 
 	for (int i = 0; i < users->size(); i++)
 	{
