@@ -25,3 +25,22 @@ bool User::hasRated(int movie)
 		return false;
 	}
 }
+
+void User::addRatingFor(int idFilm, int value)
+{
+	this->ratedMovies[idFilm] = value;
+}
+
+void User::addTestMovie(int idFilm, int value)
+{
+	this->testMovies[idFilm] = value;
+}
+
+int User::getRatingFor(int idFilm)
+{
+	if(this->hasRated(idFilm))
+	{
+		return this->ratedMovies.at(idFilm);
+	}
+	return 0;
+}

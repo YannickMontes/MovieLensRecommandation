@@ -4,5 +4,6 @@
 #define MIN_RATING 1
 #define MAX_RATING 5
 
-#define INPUT_BASE "../Data/uX.base"
-#define INPUT_TEST "../Data/uX.test"
+#define INPUT_DEB "../Data/u"
+#define INPUT_BASE_END ".base"
+#define INPUT_TEST_END ".test"
