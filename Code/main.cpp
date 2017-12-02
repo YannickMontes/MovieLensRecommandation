@@ -249,20 +249,18 @@ void calcNewRates(vector<User>* users)
 	//Pour chaque user:
 	vector<int> closestNeigh;
 	for (User current : *users) {
-		map<int, int> trueRatings = current.getTestRatings();
-		for (auto idFilm : trueRatings) {
+		for (auto idFilm : current.getTestRatings()) {
 			double noteSum = 0;
 			double nbNotes = 0;
 			double finalNote;
 			closestNeigh.clear();
 			int nbClosest = 0;
-			map<int, double> similitude = current.getSimilitude();
-			for (auto &element : similitude)
+			for (auto &element : current.getSimilitude())
 			{
-				User tmp = users->at(element.first - 1);
-				if(tmp.hasRated(idFilm.first))
+				User* tmp = &users->at(element.first - 1);
+				if(tmp->hasRated(idFilm.first))
 				{
-					closestNeigh.push_back(tmp.getId());
+					closestNeigh.push_back(tmp->getId());
 					nbClosest++;
 					if(nbClosest >= K_CLOSEST_USR)
 					{
@@ -273,12 +271,9 @@ void calcNewRates(vector<User>* users)
 
 			for (int neigh : closestNeigh)
 			{
-				User closeUser = users->at(neigh-1);
-				if(closeUser.hasRated(idFilm.first))
-				{
-					noteSum = noteSum + closeUser.getRatingFor(idFilm.first);
-					nbNotes++;
-				}
+				User* closeUser = &users->at(neigh-1);
+				noteSum = noteSum + closeUser->getRatingFor(idFilm.first);
+				nbNotes++;
 			}
 			if (nbNotes != 0)
 			{
@@ -289,9 +284,9 @@ void calcNewRates(vector<User>* users)
 				nbNoteNull += 1;
 			}
 		}
-		if(current.getId() % 10 == 0)
+		if(current.getId() % 100 == 0)
 		{
-			cout << "Utilisateur 50"<<endl;
+			cout << "Utilisateur "<< current.getId() << endl;
 		}
 	}
 	cout << "Calcul termine... Notes nulles: "<< nbNoteNull << endl;
