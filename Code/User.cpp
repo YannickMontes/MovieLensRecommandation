@@ -44,3 +44,21 @@ int User::getRatingFor(int idFilm)
 	}
 	return 0;
 }
+
+void User::calcAllRatings()
+{
+	for (auto idFilm : testMovies) {
+		int noteSum = 0;
+		int nbNotes = 0;
+		double finalNote;
+		for (int i = 0; i < kClosestUsers.size(); i++) {
+			if (kClosestUsers[i].getRatings().find(idFilm.first) != kClosestUsers[i].getRatings().end()) {
+				noteSum = noteSum + (kClosestUsers[i].getRatings()[idFilm.first]);
+				nbNotes += 1;
+			}
+		}
+		if (nbNotes != 0) {
+			finalNote = noteSum / nbNotes;
+		}
+	}
+}

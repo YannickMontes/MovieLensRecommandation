@@ -19,7 +19,10 @@ public:
 	int getId(){return this->id;};
 	bool hasRated(int movie);
 	int getRatingFor(int idFilm);
+	void calcAllRatings();
 	void addRatingFor(int idFilm, int value);
 	void addTestMovie(int idFilm, int value);
 	std::vector<User> getKClosestUsers(){return this->kClosestUsers;};
+
+	std::map<int, int> getRatings() { return ratedMovies; };
 };
