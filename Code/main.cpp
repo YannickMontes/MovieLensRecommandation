@@ -11,7 +11,7 @@
 using namespace std;
 
 void readFiles(int, vector<User>*);
-void fillSimilitudeBetweenUsers(vector<User>* users);
+void fillSimilitudeBetweenUsers(int, vector<User>* users, bool);
 
 int main(int argc, char *argv[])
 {
@@ -19,10 +19,12 @@ int main(int argc, char *argv[])
 	cout << "Arnaud Ricaud 17 je sais pas" << endl;
 	cout << "Yannick Montes 17 138 937" << endl;
 
-	vector<User> users;
-	readFiles(1, &users);
+	int docToLoad = 1;
 
-	fillSimilitudeBetweenUsers(&users);
+	vector<User> users;
+	readFiles(docToLoad, &users);
+
+	fillSimilitudeBetweenUsers(docToLoad, &users, true);
 
 	return 0;
 }
@@ -86,9 +88,24 @@ void readFiles(int number, vector<User>* users)
 	cout << "Lecture terminée." << endl;
 }
 
-void fillSimilitudeBetweenUsers(vector<User>* users)
+void fillSimilitudeBetweenUsers(int number, vector<User>* users, bool writeFile)
 {
 	cout << "Calcul de la similitude entre chaque user..." << endl;
+
+	ofstream similitudeFile;
+	if(writeFile)
+	{
+		ostringstream oss;
+		oss << OUT_SIMILITUDE_DEB << number << OUT_SIMILITUDE_END;
+
+		similitudeFile.open(oss.str().c_str());
+
+		if(!similitudeFile)
+		{
+			cerr << "Fail to open output file" << endl;
+		}
+	}
+
 	vector<int> moviesRatedBoth;
 	for(User userU : *users)
 	{
@@ -125,9 +142,15 @@ void fillSimilitudeBetweenUsers(vector<User>* users)
 
 				userU.addSimilitudeTo(userV, pearsonCoeff);
 				userV.addSimilitudeTo(userU, pearsonCoeff);
+
+				if(writeFile)
+					similitudeFile << userU.getId() << " " << userV.getId() << " " << pearsonCoeff << "\r\n";
 			}
 		}
 	}
+
+	if(writeFile)
+		similitudeFile.close();
 
 	cout << "Calcul de la similitude terminé." << endl;
 }

@@ -7,3 +7,6 @@
 #define INPUT_DEB "../Data/u"
 #define INPUT_BASE_END ".base"
 #define INPUT_TEST_END ".test"
+
+#define OUT_SIMILITUDE_DEB "../Data/similitudeU"
+#define OUT_SIMILITUDE_END ".txt"
