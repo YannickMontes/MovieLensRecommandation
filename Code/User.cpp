@@ -1,6 +1,7 @@
 #include "User.h"
 #include <stdexcept>
 
+
 using namespace std;
 
 User::User(int id)
@@ -41,6 +42,11 @@ void User::addSimilitudeTo(User u, double value)
 	this->similitude.emplace(u.getId(), value);
 }
 
+void User::addHypotheticalRate(int idFilm, double value)
+{
+	this->hypotheticalRates.emplace(idFilm, value);
+}
+
 int User::getRatingFor(int idFilm)
 {
 	if(this->hasRated(idFilm))
@@ -50,21 +56,11 @@ int User::getRatingFor(int idFilm)
 	return 0;
 }
 
-void User::calcAllRatings()
+void User::addClosestUser(int idUser)
 {
-	for (auto idFilm : testMovies) {
-		int noteSum = 0;
-		int nbNotes = 0;
-		double finalNote;
-		for (int i = 0; i < kClosestUsers.size(); i++) {
-			if (kClosestUsers[i].getRatings().find(idFilm.first) != kClosestUsers[i].getRatings().end()) {
-				noteSum = noteSum + (kClosestUsers[i].getRatings()[idFilm.first]);
-				nbNotes += 1;
-			}
-		}
-		if (nbNotes != 0) {
-			finalNote = noteSum / nbNotes;
-			addTestMovie(idFilm.first, finalNote);
-		}
-	}
+	this->kClosestUsers.push_back(idUser);
 }
+
+
+
+
