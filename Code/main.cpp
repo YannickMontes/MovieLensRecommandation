@@ -16,6 +16,11 @@ void writeResult(int number, vector<User>* users);
 void calcNewRates(vector<User>* users);
 void computeMeanSquaredError(int, vector<User>*);
 
+bool compareFunc(pair<int, int> elem1 ,pair<int, int> elem2)
+{
+	return elem1.second < elem2.second;
+}
+
 int main(int argc, char *argv[])
 {
 	cout << "TP4 - Movie Lens" <<endl;
@@ -117,7 +122,7 @@ void readFiles(int number, vector<User>* users)
 
 		cout << "Lecture terminee." << endl;
 		cout << "Calcul des plus proches voisins..." << endl;
-
+		/*
 		for(int i = 0; i< users->size(); i++){
 			for (int j = 0; j < K_CLOSEST_USR; j++) {
 				double simValue = 0;
@@ -138,6 +143,12 @@ void readFiles(int number, vector<User>* users)
 				}
 				(*users)[i].addClosestUser(idCloseUser);
 			}
+		}
+		*/
+
+		for(User u : *users)
+		{
+			sort(u.getSimilitude().begin(), u.getSimilitude().end(), compareFunc);
 		}
 	}
 
