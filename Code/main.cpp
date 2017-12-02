@@ -20,7 +20,7 @@ int main(int argc, char *argv[])
 	cout << "Arnaud Ricaud 17 je sais pas" << endl;
 	cout << "Yannick Montes 17 138 937" << endl;
 
-	int docToLoad = 4;
+	int docToLoad = 1;
 
 	vector<User> users;
 	readFiles(docToLoad, &users);
@@ -69,8 +69,11 @@ void readFiles(int number, vector<User>* users)
 	base.close();
 
 	ifstream test;
-	oss.flush();
+	oss.clear();
+	oss.str(string());
 	oss << INPUT_DEB << number << INPUT_TEST_END;
+
+	test.open(oss.str().c_str());
 
 	if(!test)
 	{
@@ -86,7 +89,8 @@ void readFiles(int number, vector<User>* users)
 	test.close();
 
 	ifstream similitude;
-	oss.flush();
+	oss.clear();
+	oss.str(string());
 	oss << OUT_SIMILITUDE_DEB << number << OUT_SIMILITUDE_END;
 
 	similitude.open(oss.str().c_str());
