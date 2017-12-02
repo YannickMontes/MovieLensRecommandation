@@ -247,7 +247,7 @@ void calcNewRates(vector<User>* users)
 	cout << "Calcul des notes hypothetiques..." << endl;
 	int nbNoteNull = 0;
 	//Pour chaque user:
-	vector<int> closestNeigh;
+	vector<User*> closestNeigh;
 	for (User current : *users) {
 		for (auto idFilm : current.getTestRatings()) {
 			double noteSum = 0;
@@ -260,7 +260,7 @@ void calcNewRates(vector<User>* users)
 				User* tmp = &users->at(element.first - 1);
 				if(tmp->hasRated(idFilm.first))
 				{
-					closestNeigh.push_back(tmp->getId());
+					closestNeigh.push_back(tmp);
 					nbClosest++;
 					if(nbClosest >= K_CLOSEST_USR)
 					{
@@ -269,16 +269,14 @@ void calcNewRates(vector<User>* users)
 				}
 			}
 
-			for (int neigh : closestNeigh)
+			for (User* neigh : closestNeigh)
 			{
-				User* closeUser = &users->at(neigh-1);
-				noteSum = noteSum + closeUser->getRatingFor(idFilm.first);
+				noteSum = noteSum + neigh->getRatingFor(idFilm.first);
 				nbNotes++;
 			}
 			if (nbNotes != 0)
 			{
 				finalNote = noteSum / nbNotes;
-				//cout <<"note: "<< finalNote << endl;
 				current.addHypotheticalRate(idFilm.first, finalNote);
 			} else {
 				nbNoteNull += 1;
