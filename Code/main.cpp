@@ -22,7 +22,7 @@ int main(int argc, char *argv[])
 	cout << "Arnaud Ricaud 17 132 853" << endl;
 	cout << "Yannick Montes 17 138 937" << endl;
 
-	int docToLoad = 5;
+	int docToLoad = 1;
 
 	vector<User> users;
 	readFiles(docToLoad, &users);
@@ -266,13 +266,13 @@ void calcNewRates(vector<User>* users)
 void computeMeanSquaredError(int number, vector<User>* users)
 {
 	double meanSquaredError = 0;
-	for(User u : users)
+	for(User u : *users)
 	{
 		map<int, int> trueRatings = u.getTestRatings();
-		//map<int, int> guessRatings = u.getGuessRatings();
-		for(int movieId : u.getTestRatings())
+		map<int, int> guessRatings = u.getHypotheticalRates();
+		for(auto &rating : guessRatings)
 		{
-			meanSquaredError += pow((guessRatings[movieId] - trueRatings[movieId]), 2);
+			meanSquaredError += pow((guessRatings[rating.first] - trueRatings[rating.first]), 2);
 		}
 	}
 
