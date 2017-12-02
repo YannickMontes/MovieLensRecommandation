@@ -30,4 +30,5 @@ public:
 	std::vector<User> getKClosestUsers(){return this->kClosestUsers;};
 
 	std::map<int, int> getRatings() { return ratedMovies; };
+	std::map<int, int> getTestRatings() { return testMovies; };
 };

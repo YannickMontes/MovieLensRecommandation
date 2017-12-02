@@ -154,3 +154,19 @@ void fillSimilitudeBetweenUsers(int number, vector<User>* users, bool writeFile)
 
 	cout << "Calcul de la similitude terminé." << endl;
 }
+
+
+void writeResult(int number, vector<User>* users) {
+
+	ofstream output;
+	output.open(OUT_RESULT_DEB + number + (string)OUT_SIMILITUDE_END);
+
+	for (int i = 0; i < users->size(); i++)
+	{
+		for (auto film : ((*users)[i]).getTestRatings()) {
+			output << ((*users)[i]).getId() << " " << film.first << " " << film.second << "\r\n";
+		}
+		i++;
+	}
+	output.close();
+}

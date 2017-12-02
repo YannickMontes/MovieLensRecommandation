@@ -10,3 +10,4 @@
 
 #define OUT_SIMILITUDE_DEB "../Data/similitudeU"
 #define OUT_SIMILITUDE_END ".txt"
+#define OUT_RESULT_DEB "../Data/resultU"
