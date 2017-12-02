@@ -20,12 +20,11 @@ int main(int argc, char *argv[])
 	cout << "Arnaud Ricaud 17 je sais pas" << endl;
 	cout << "Yannick Montes 17 138 937" << endl;
 
-	int docToLoad = 1;
+	int docToLoad = 4;
 
 	vector<User> users;
 	readFiles(docToLoad, &users);
 
-	fillSimilitudeBetweenUsers(docToLoad, &users, true);
 	writeResult(docToLoad, &users);
 	return 0;
 }
@@ -86,6 +85,28 @@ void readFiles(int number, vector<User>* users)
 
 	test.close();
 
+	ifstream similitude;
+	oss.flush();
+	oss << OUT_SIMILITUDE_DEB << number << OUT_SIMILITUDE_END;
+
+	similitude.open(oss.str().c_str());
+
+	if(!similitude)
+	{
+		cout << "Le fichier similitude n'existe pas. Nous allons calculer cette dernière" << endl;
+		fillSimilitudeBetweenUsers(number, users, true);
+	}
+	else
+	{
+		int id1, id2;
+		double simi;
+		while(similitude >> id1 >> id2 >> simi)
+		{
+			users->at(id1 -1).addSimilitudeTo(id2, simi);
+			users->at(id2 -1).addSimilitudeTo(id1, simi);
+		}
+	}
+
 	cout << "Lecture terminée." << endl;
 }
 
@@ -112,7 +133,7 @@ void fillSimilitudeBetweenUsers(int number, vector<User>* users, bool writeFile)
 	{
 		for(User userV : *users)
 		{
-			if(userU.getId() != userV.getId())
+			if(userV.getId() > userU.getId())
 			{
 				moviesRatedBoth.clear();
 				map<int, int> ratedMoviesU = userU.getRatedMovies();
