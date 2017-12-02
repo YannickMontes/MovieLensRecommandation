@@ -39,7 +39,7 @@ void User::addTestMovie(int idFilm, int value)
 
 void User::addSimilitudeTo(User u, double value)
 {
-	this->similitude.emplace(u.getId(), value);
+	this->similitude.emplace(u, value);
 }
 
 void User::addHypotheticalRate(int idFilm, double value)
