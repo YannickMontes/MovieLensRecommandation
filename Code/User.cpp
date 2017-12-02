@@ -36,6 +36,11 @@ void User::addTestMovie(int idFilm, int value)
 	this->testMovies[idFilm] = value;
 }
 
+void User::addSimilitudeTo(User u, double value)
+{
+	this->similitude.emplace(u.getId(), value);
+}
+
 int User::getRatingFor(int idFilm)
 {
 	if(this->hasRated(idFilm))
