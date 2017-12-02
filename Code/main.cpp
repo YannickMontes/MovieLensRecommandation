@@ -113,6 +113,9 @@ void readFiles(int number, vector<User>* users)
 			users->at(id2 -1).addSimilitudeTo(id1, simi);
 		}
 
+		cout << "Lecture terminee." << endl;
+		cout << "Calcul des plus proches voisins..." << endl;
+
 		for(int i = 0; i< users->size(); i++){
 			for (int j = 0; j < K_CLOSEST_USR; j++) {
 				double simValue = 0;
@@ -136,7 +139,7 @@ void readFiles(int number, vector<User>* users)
 		}
 	}
 
-	cout << "Lecture terminée." << endl;
+	cout << "Calculs des plus proches voisins termines." << endl;
 }
 
 void fillSimilitudeBetweenUsers(int number, vector<User>* users, bool writeFile)
@@ -232,17 +235,18 @@ void writeResult(int number, vector<User>* users) {
 void calcNewRates(vector<User>* users)
 {
 	cout << "Calcul des notes hypothetiques..." << endl;
+	int nbNoteNull = 0;
 	//Pour chaque user:
 	for (int i = 0; i < users->size(); i++) {
 		for (auto idFilm : (*users)[i].getTestRatings()) {
-			int noteSum = 0;
-			int nbNotes = 0;
+			double noteSum = 0;
+			double nbNotes = 0;
 			double finalNote;
-			User *closeUser = new User(0);
 			for (int j = 0; j < (*users)[i].getKClosestUsers().size(); j++) {
+				User *closeUser = nullptr;
 				for (int l = 0; l < users->size(); l++) {
 					if ((*users)[l].getId() == (*users)[i].getKClosestUsers()[j]) {
-						closeUser = &(*users)[l];
+						closeUser = &(users->at(l));
 						break;
 					}
 				}
@@ -253,10 +257,14 @@ void calcNewRates(vector<User>* users)
 			}
 			if (nbNotes != 0) {
 				finalNote = noteSum / nbNotes;
+				cout <<"note: "<< finalNote << endl;
+				system("pause");
 				(*users)[i].addHypotheticalRate(idFilm.first, finalNote);
+			} else {
+				nbNoteNull += 1;
 			}
 		}
 	}
-	cout << "Calcul termine..." << endl;
+	cout << "Calcul termine... Notes nulles: "<< nbNoteNull << endl;
 }
 
