@@ -64,6 +64,7 @@ void User::calcAllRatings()
 		}
 		if (nbNotes != 0) {
 			finalNote = noteSum / nbNotes;
+			addTestMovie(idFilm.first, finalNote);
 		}
 	}
 }
