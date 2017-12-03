@@ -144,7 +144,10 @@ void readFiles(int number, vector<User>* users)
 		*/
 		for(User u : *users)
 		{
+			//cout << "Avant" << u.getSimilitude().size() << endl;
 			u.sortSimilitude();
+
+			//cout <<  "Après " << u.getSimilitude().size() << endl;
 		}
 	}
 
@@ -247,7 +250,7 @@ void calcNewRates(vector<User>* users)
 	cout << "Calcul des notes hypothetiques..." << endl;
 	int nbNoteNull = 0;
 	//Pour chaque user:
-	vector<User*> closestNeigh;
+	vector<int> closestNeigh;
 	for (User current : *users) {
 		for (auto idFilm : current.getTestRatings()) {
 			double noteSum = 0;
@@ -260,7 +263,7 @@ void calcNewRates(vector<User>* users)
 				User* tmp = &users->at(element.first - 1);
 				if(tmp->hasRated(idFilm.first))
 				{
-					closestNeigh.push_back(tmp);
+					closestNeigh.push_back(tmp->getId());
 					nbClosest++;
 					if(nbClosest >= K_CLOSEST_USR)
 					{
@@ -269,9 +272,9 @@ void calcNewRates(vector<User>* users)
 				}
 			}
 
-			for (User* neigh : closestNeigh)
+			for (int neigh : closestNeigh)
 			{
-				noteSum = noteSum + neigh->getRatingFor(idFilm.first);
+				noteSum = noteSum + users->at(neigh-1).getRatingFor(idFilm.first);
 				nbNotes++;
 			}
 			if (nbNotes != 0)

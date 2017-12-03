@@ -68,7 +68,7 @@ void User::sortSimilitude()
 	typedef function<bool(pair<int, double>, pair<int, double>)> Comparator;
 	Comparator compFunctor = [](pair<int, double> elem1 ,pair<int, double> elem2)
 	{
-		return elem1.second > elem2.second;
+		return elem1.second >= elem2.second;
 	};
 
 	set<pair<int, double>, Comparator> setOfKey(this->similitude.begin(), this->similitude.end(), compFunctor);
@@ -77,6 +77,6 @@ void User::sortSimilitude()
 
 	for (pair<int, double> element : setOfKey)
 	{
-		this->similitude.emplace(element.first, element.second);
+		this->similitude.insert(element);
 	}
 }
