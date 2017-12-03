@@ -15,7 +15,7 @@ using namespace std;
 void readFiles(int, vector<User*>*);
 void fillSimilitudeBetweenUsers(int, vector<User*>* users, bool);
 void writeResult(int number, vector<User*>* users);
-void calcNewRates(vector<User*>* users);
+void calcNewRates(vector<User*>* users, int);
 void computeMeanSquaredError(int, vector<User*>*);
 
 int main(int argc, char *argv[])
@@ -24,14 +24,23 @@ int main(int argc, char *argv[])
 	cout << "Arnaud Ricaud 17 132 853" << endl;
 	cout << "Yannick Montes 17 138 937" << endl;
 
-	cout << "Jeu de test numéro " << DOC_TO_LOAD << endl;
-	cout << K_CLOSEST_USR << "NN algorithme choisi" << endl;
+	for(int i=1; i<=5; i++)
+	{
+		for(int j=30; j<=50; j+= 10)
+		{
+			cout << "Jeu de test numéro " << i << endl;
+			cout << j << " NN algorithme choisi" << endl;
 
-	vector<User*> users;
-	readFiles(DOC_TO_LOAD, &users);
-	calcNewRates(&users);
-	writeResult(DOC_TO_LOAD, &users);
-	computeMeanSquaredError(DOC_TO_LOAD, &users);
+			vector<User*> users;
+			readFiles(i, &users);
+			calcNewRates(&users, j);
+			writeResult(i, &users);
+			computeMeanSquaredError(i, &users);
+
+			cout << endl << endl;
+		}
+	}
+
 	system("pause");
 	return 0;
 }
@@ -245,7 +254,7 @@ void writeResult(int number, vector<User*>* users) {
 
 
 
-void calcNewRates(vector<User*>* users)
+void calcNewRates(vector<User*>* users, int nbClosestUser)
 {
 	cout << "Calcul des notes hypothetiques..." << endl;
 	int nbNoteNull = 0;
@@ -258,7 +267,7 @@ void calcNewRates(vector<User*>* users)
 			double finalNote;
 			//int nbClosest = 0;
 
-			closestNeigh = current->getKClosestUserFor(idFilm.first, users, K_CLOSEST_USR);
+			closestNeigh = current->getKClosestUserFor(idFilm.first, users, nbClosestUser);
 			for (auto &neigh : *closestNeigh)
 			{
 				noteSum = noteSum + users->at(neigh.first-1)->getRatingFor(idFilm.first);
@@ -274,7 +283,7 @@ void calcNewRates(vector<User*>* users)
 		}
 		if(current->getId() % 100 == 0)
 		{
-			cout << "Utilisateur "<< current->getId() << endl;
+			//cout << "Utilisateur "<< current->getId() << endl;
 		}
 	}
 	cout << "Calcul termine... Notes nulles: "<< nbNoteNull << endl;
