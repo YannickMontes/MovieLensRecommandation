@@ -3,6 +3,7 @@
 #define NB_RATINGS 100000
 #define MIN_RATING 1
 #define MAX_RATING 5
+#define DOC_TO_LOAD 5
 
 #define INPUT_DEB "../Data/u"
 #define INPUT_BASE_END ".base"
@@ -11,4 +12,5 @@
 #define OUT_SIMILITUDE_DEB "../Data/similitudeU"
 #define OUT_SIMILITUDE_END ".txt"
 #define OUT_RESULT_DEB "../Data/resultU"
-#define K_CLOSEST_USR 10
+#define OUT_RESULT_END ".txt"
+#define K_CLOSEST_USR 15

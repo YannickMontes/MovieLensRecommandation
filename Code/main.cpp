@@ -12,11 +12,11 @@
 
 using namespace std;
 
-void readFiles(int, vector<User>*);
-void fillSimilitudeBetweenUsers(int, vector<User>* users, bool);
-void writeResult(int number, vector<User>* users);
-void calcNewRates(vector<User>* users);
-void computeMeanSquaredError(int, vector<User>*);
+void readFiles(int, vector<User*>*);
+void fillSimilitudeBetweenUsers(int, vector<User*>* users, bool);
+void writeResult(int number, vector<User*>* users);
+void calcNewRates(vector<User*>* users);
+void computeMeanSquaredError(int, vector<User*>*);
 
 int main(int argc, char *argv[])
 {
@@ -24,18 +24,19 @@ int main(int argc, char *argv[])
 	cout << "Arnaud Ricaud 17 132 853" << endl;
 	cout << "Yannick Montes 17 138 937" << endl;
 
-	int docToLoad = 1;
+	cout << "Jeu de test numéro " << DOC_TO_LOAD << endl;
+	cout << K_CLOSEST_USR << "NN algorithme choisi" << endl;
 
-	vector<User> users;
-	readFiles(docToLoad, &users);
+	vector<User*> users;
+	readFiles(DOC_TO_LOAD, &users);
 	calcNewRates(&users);
-	writeResult(docToLoad, &users);
-	computeMeanSquaredError(docToLoad, &users);
+	writeResult(DOC_TO_LOAD, &users);
+	computeMeanSquaredError(DOC_TO_LOAD, &users);
 	system("pause");
 	return 0;
 }
 
-void readFiles(int number, vector<User>* users)
+void readFiles(int number, vector<User*>* users)
 {
 	cout << "Lecture des fichiers..." << endl;
 	ifstream base;
@@ -59,7 +60,7 @@ void readFiles(int number, vector<User>* users)
 			if(currentUser != nullptr)
 			{
 				currentUser->setMoyenneRatings(moyenne / nbMoviesRated);
-				users->push_back(*currentUser);
+				users->push_back(currentUser);
 			}
 			currentUser = new User(userId);
 			lastUserId = userId;
@@ -70,7 +71,7 @@ void readFiles(int number, vector<User>* users)
 		moyenne += rating;
 		nbMoviesRated++;
 	}
-	users->push_back(*currentUser);
+	users->push_back(currentUser);
 
 	base.close();
 
@@ -89,7 +90,8 @@ void readFiles(int number, vector<User>* users)
 
 	while(test >> userId >> movieId >> rating >> timestamp)
 	{
-		users->at(userId - 1).addTestMovie(movieId, rating);
+		//cout << userId << " " << movieId << " " << rating << " " << timestamp << endl;
+		users->at(userId - 1)->addTestMovie(movieId, rating);
 	}
 
 	test.close();
@@ -113,12 +115,12 @@ void readFiles(int number, vector<User>* users)
 		double simi;
 		while(similitude >> id1 >> id2 >> simi)
 		{
-			users->at(id1 -1).addSimilitudeTo(id2, simi);
-			users->at(id2 -1).addSimilitudeTo(id1, simi);
+			users->at(id1 -1)->addSimilitudeTo(id2, simi);
+			users->at(id2 -1)->addSimilitudeTo(id1, simi);
 		}
 
 		cout << "Lecture terminee." << endl;
-		cout << "Calcul des plus proches voisins..." << endl;
+		cout << "Triage des similitude..." << endl;
 		/*
 		for(int i = 0; i< users->size(); i++){
 			for (int j = 0; j < K_CLOSEST_USR; j++) {
@@ -142,19 +144,16 @@ void readFiles(int number, vector<User>* users)
 			}
 		}
 		*/
-		for(User u : *users)
-		{
-			//cout << "Avant" << u.getSimilitude().size() << endl;
-			u.sortSimilitude();
-
-			//cout <<  "Après " << u.getSimilitude().size() << endl;
-		}
 	}
 
-	cout << "Calculs des plus proches voisins termines." << endl;
+	for(User* u : *users)
+	{
+		u->sortSimilitude();
+	}
+	cout << "Triage des similitude terminé" << endl;
 }
 
-void fillSimilitudeBetweenUsers(int number, vector<User>* users, bool writeFile)
+void fillSimilitudeBetweenUsers(int number, vector<User*>* users, bool writeFile)
 {
 	cout << "Calcul de la similitude entre chaque user..." << endl;
 
@@ -173,17 +172,17 @@ void fillSimilitudeBetweenUsers(int number, vector<User>* users, bool writeFile)
 	}
 
 	vector<int> moviesRatedBoth;
-	for(User userU : *users)
+	for(User* userU : *users)
 	{
-		for(User userV : *users)
+		for(User* userV : *users)
 		{
-			if(userV.getId() > userU.getId())
+			if(userV->getId() > userU->getId())
 			{
 				moviesRatedBoth.clear();
-				map<int, int> ratedMoviesU = userU.getRatedMovies();
+				map<int, int> ratedMoviesU = userU->getRatedMovies();
 				for(auto &pair : ratedMoviesU)
 				{
-					if(userV.hasRated(pair.first))
+					if(userV->hasRated(pair.first))
 					{
 						moviesRatedBoth.push_back(pair.first);
 					}
@@ -194,9 +193,9 @@ void fillSimilitudeBetweenUsers(int number, vector<User>* users, bool writeFile)
 				double denomSumV = 0;
 				for(auto &movieId : moviesRatedBoth)
 				{
-					numeratorSum += ((userU.getRatingFor(movieId) - userU.getMoyenneRatings()) * (userV.getRatingFor(movieId) - userV.getMoyenneRatings()));
-					denomSumU += pow((userU.getRatingFor(movieId) - userU.getMoyenneRatings()), 2);
-					denomSumV += pow((userV.getRatingFor(movieId) - userV.getMoyenneRatings()), 2);
+					numeratorSum += ((userU->getRatingFor(movieId) - userU->getMoyenneRatings()) * (userV->getRatingFor(movieId) - userV->getMoyenneRatings()));
+					denomSumU += pow((userU->getRatingFor(movieId) - userU->getMoyenneRatings()), 2);
+					denomSumV += pow((userV->getRatingFor(movieId) - userV->getMoyenneRatings()), 2);
 				}
 
 				double pearsonCoeff = (numeratorSum / sqrt((denomSumU * denomSumV)));
@@ -206,11 +205,11 @@ void fillSimilitudeBetweenUsers(int number, vector<User>* users, bool writeFile)
 					pearsonCoeff = 0;
 				}
 
-				userU.addSimilitudeTo(userV, pearsonCoeff);
-				userV.addSimilitudeTo(userU, pearsonCoeff);
+				userU->addSimilitudeTo(*userV, pearsonCoeff);
+				userV->addSimilitudeTo(*userU, pearsonCoeff);
 
 				if(writeFile)
-					similitudeFile << userU.getId() << " " << userV.getId() << " " << pearsonCoeff << "\r\n";
+					similitudeFile << userU->getId() << " " << userV->getId() << " " << pearsonCoeff << "\r\n";
 			}
 		}
 	}
@@ -221,22 +220,23 @@ void fillSimilitudeBetweenUsers(int number, vector<User>* users, bool writeFile)
 	cout << "Calcul de la similitude terminé." << endl;
 }
 
-void writeResult(int number, vector<User>* users) {
+void writeResult(int number, vector<User*>* users) {
 	cout << "Debut de l'ecriture des resultats" << endl;
-	string file = "../Data/resultU.txt";
+	ostringstream oss;
+	oss << OUT_RESULT_DEB << number << OUT_RESULT_END;
 	ofstream output;
-	output.open(file);
+	output.open(oss.str().c_str());
 	if(!output)
 	{
 		cout << "Fail to write results" << endl;
 		return;
 	};
-	for (int i = 0; i < users->size(); i++)
+	for (User* u : *users)
 	{
-		for (auto film : ((*users)[i]).getHypotheticalRates()) {
-			output << ((*users)[i]).getId() << " " << film.first << " " << film.second << "\r\n";
+		for (auto film : u->getHypotheticalRates())
+		{
+			output << u->getId() << " " << film.first << " " << film.second << "\r\n";
 		}
-		i++;
 	}
 
 	output.close();
@@ -245,62 +245,49 @@ void writeResult(int number, vector<User>* users) {
 
 
 
-void calcNewRates(vector<User>* users)
+void calcNewRates(vector<User*>* users)
 {
 	cout << "Calcul des notes hypothetiques..." << endl;
 	int nbNoteNull = 0;
 	//Pour chaque user:
-	vector<int> closestNeigh;
-	for (User current : *users) {
-		for (auto idFilm : current.getTestRatings()) {
+	vector< pair<int, double> >* closestNeigh;
+	for (User* current : *users) {
+		for (auto idFilm : current->getTestRatings()) {
 			double noteSum = 0;
 			double nbNotes = 0;
 			double finalNote;
-			closestNeigh.clear();
-			int nbClosest = 0;
-			for (auto &element : current.getSimilitude())
-			{
-				User* tmp = &users->at(element.first - 1);
-				if(tmp->hasRated(idFilm.first))
-				{
-					closestNeigh.push_back(tmp->getId());
-					nbClosest++;
-					if(nbClosest >= K_CLOSEST_USR)
-					{
-						break;
-					}
-				}
-			}
+			//int nbClosest = 0;
 
-			for (int neigh : closestNeigh)
+			closestNeigh = current->getKClosestUserFor(idFilm.first, users, K_CLOSEST_USR);
+			for (auto &neigh : *closestNeigh)
 			{
-				noteSum = noteSum + users->at(neigh-1).getRatingFor(idFilm.first);
+				noteSum = noteSum + users->at(neigh.first-1)->getRatingFor(idFilm.first);
 				nbNotes++;
 			}
 			if (nbNotes != 0)
 			{
 				finalNote = noteSum / nbNotes;
-				current.addHypotheticalRate(idFilm.first, finalNote);
+				current->addHypotheticalRate(idFilm.first, finalNote);
 			} else {
 				nbNoteNull += 1;
 			}
 		}
-		if(current.getId() % 100 == 0)
+		if(current->getId() % 100 == 0)
 		{
-			cout << "Utilisateur "<< current.getId() << endl;
+			cout << "Utilisateur "<< current->getId() << endl;
 		}
 	}
 	cout << "Calcul termine... Notes nulles: "<< nbNoteNull << endl;
 }
 
 
-void computeMeanSquaredError(int number, vector<User>* users)
+void computeMeanSquaredError(int number, vector<User*>* users)
 {
 	double meanSquaredError = 0;
-	for(User u : *users)
+	for(User* u : *users)
 	{
-		map<int, int> trueRatings = u.getTestRatings();
-		map<int, int> guessRatings = u.getHypotheticalRates();
+		map<int, int> trueRatings = u->getTestRatings();
+		map<int, int> guessRatings = u->getHypotheticalRates();
 		for(auto &rating : guessRatings)
 		{
 			meanSquaredError += pow((guessRatings[rating.first] - trueRatings[rating.first]), 2);

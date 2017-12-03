@@ -12,6 +12,7 @@ private:
 	std::map<int, int> testMovies;//Int id film, int guessed rating
 	std::map<int, int> hypotheticalRates; //Int id film, int note
 	std::map<int, double> similitude;
+	std::vector< std::pair<int, double> > sortedSimilitude;
 	std::vector<int> kClosestUsers;
 	double moyenneRatings;
 
@@ -32,6 +33,7 @@ public:
 	double getMoyenneRatings(){return this->moyenneRatings;};
 	std::vector<int> getKClosestUsers(){return this->kClosestUsers;};
 	void sortSimilitude();
+	std::vector< std::pair<int, double> >* getKClosestUserFor(int, std::vector<User*>*, int);
 
 	std::map<int, int> getRatings() { return ratedMovies; };
 	std::map<int, int> getTestRatings() { return testMovies; };
